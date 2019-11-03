@@ -1,0 +1,22 @@
+{
+  "credentials": {
+    "accessKeyId": "",
+    "secretAccessKey": "",
+    "sessionToken": ""
+  },
+  "action": "READ",
+  "request": {
+    "desiredResourceState": {
+      "credentials": {
+        "accessToken": "ACCESS_TOKEN",
+        "accountId": "ACCOUNT_ID"
+      },
+      "group": {
+        "groupId": "sig-01ee724f",
+        "preferredAvailabilityZones": null
+      }
+    },
+    "logicalResourceIdentifier": "MyResource"
+  },
+  "callbackContext": null
+}
