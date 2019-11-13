@@ -13,7 +13,7 @@
       },
       "group": {
         "groupId": "sig-5378bc90",
-        "name": "UluruWithEcs",
+        "name": "EcsGroup",
         "region": "us-west-2",
         "capacity": {
           "minimum": 1,

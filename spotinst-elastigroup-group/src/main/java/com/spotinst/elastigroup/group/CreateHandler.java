@@ -22,7 +22,7 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
 
         if (model.getGroup() != null) {
 
-            AddCreatedByUluruToGroupDescription(model.getGroup());
+            AddCreatedByCloudFormationToGroupDescription(model.getGroup());
 
             ElastigroupConverter groupConverter = new ElastigroupConverter();
             Elastigroup          groupToCreate  = groupConverter.blModelToApi(model.getGroup());
@@ -49,14 +49,14 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
     }
 
     //region Private Methods
-    private void AddCreatedByUluruToGroupDescription(Group blGroup) {
+    private void AddCreatedByCloudFormationToGroupDescription(Group blGroup) {
         String groupDescription = blGroup.getDescription();
 
         if (groupDescription != null){
-            groupDescription = groupDescription.concat(" - Created by Uluru Provider");
+            groupDescription = groupDescription.concat(" - Created by CloudFormation Provider");
         }
         else{
-            groupDescription = "Created by Uluru Provider";
+            groupDescription = "Created by CloudFormation Provider";
         }
 
         blGroup.setDescription(groupDescription);

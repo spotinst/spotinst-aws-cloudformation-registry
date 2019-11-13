@@ -3,6 +3,7 @@
     "language": "java",
     "runtime": "java8",
     "entrypoint": "com.spotinst.elastigroup.group.HandlerWrapper::handleRequest",
+    "testEntrypoint": "com.spotinst.elastigroup.group.HandlerWrapper::testEntrypoint",
     "settings": {
         "namespace": [
             "com",

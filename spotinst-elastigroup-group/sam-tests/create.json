@@ -8,11 +8,11 @@
   "request": {
     "desiredResourceState": {
       "credentials": {
-        "accessToken": "ACCESS_TOKEN",
-        "accountId": "ACCOUNT_ID"
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcG90aW5zdCIsImV4cCI6MTgyNDM3NjIxNCwidWlkIjotMSwicm9sZSI6Miwib2lkIjo2MDYwNzk4NjIyNjEsImlhdCI6MTUwOTAxNjIxNH0.ptsB3-cUeIVflzeJnSfJDV2YeDXrPfooJbisFcuGVx0",
+        "accountId": "act-00045b34"
       },
       "group": {
-        "name": "UluruWithEcs",
+        "name": "testProvider",
         "region": "us-west-2",
         "capacity": {
           "minimum": 1,
