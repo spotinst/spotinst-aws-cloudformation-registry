@@ -5,10 +5,12 @@ Add the following parameters to your CFN schema.
 
 Credentials - Your spotinst account id and access token.
 
-Group - Elastigroup json schema. For more information see our API documentation: [Elastigroup API](https://api.spotinst.com/spotinst-api/elastigroup/amazon-web-services/create/) 
+Group - Elastigroup json schema. 
+
+For more information see our API documentation: [Elastigroup API](https://api.spotinst.com/spotinst-api/elastigroup/amazon-web-services/create/) 
+
 
  
-
 ```json
 {
     "AWSTemplateFormatVersion": "2010-09-09",
