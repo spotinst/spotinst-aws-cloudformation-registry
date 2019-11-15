@@ -1,7 +1,7 @@
 package com.spotinst.elastigroup.group;
 
 import client.SpotinstClientWrapper;
-import com.amazonaws.cloudformation.proxy.*;
+import software.amazon.cloudformation.proxy.*;
 import com.spotinst.sdkjava.exception.SpotinstValidationException;
 import com.spotinst.sdkjava.model.Elastigroup;
 import com.spotinst.sdkjava.model.ElastigroupGetRequest;
