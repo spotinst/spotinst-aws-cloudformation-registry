@@ -2,9 +2,11 @@
 
 The official Spotinst Provider for CloudFormation Registry.
 
-Each folder defines a unique provider for each Spotinst resource. See the README file in each resource for further information.
+See full release announcement on the Spotinst [Blog](https://spotinst.com/blog/aws-cloudformation-custom-resource/).
 
-## Installation
+## Resources
+
+* [Elastigroup](./spotinst-elastigroup-group)
 
 
 
