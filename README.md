@@ -1,6 +1,6 @@
-# spotinst-cloudFormation-provider
+# spotinst-cloudformation-registry
 
-The official Spotinst Provider for CloudFormation service.
+The official Spotinst Provider for CloudFormation Registry.
 
 Each folder defines a unique provider for each Spotinst resource. See the README file in each resource for further information.
 
