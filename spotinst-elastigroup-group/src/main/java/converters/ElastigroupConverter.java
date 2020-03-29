@@ -704,8 +704,10 @@ public class ElastigroupConverter {
                 apiLaunchSpecificationBuilder.setIamRole(apiIamRoleBuilder.build());
             }
 
-            // TODO add tenancy
-            // TODO add network interfaces
+            if (blModelLaunchSpecification.getSecurityGroupIds() != null) {
+                List<String> blModelSecurityGroupIds = blModelLaunchSpecification.getSecurityGroupIds();
+                apiLaunchSpecificationBuilder.setSecurityGroupIds(blModelSecurityGroupIds);
+            }
 
             apiComputeBuilder.setLaunchSpecification(apiLaunchSpecificationBuilder.build());
         }
