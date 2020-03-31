@@ -9,12 +9,14 @@ import converters.ElastigroupConverter;
 
 public class CreateHandler extends BaseHandler<CallbackContext> {
 
+    private static final String DESCRIPTION = "Created by CloudFormation Provider";
+
     @Override
     public ProgressEvent<ResourceModel, CallbackContext> handleRequest(
-        final AmazonWebServicesClientProxy proxy,
-        final ResourceHandlerRequest<ResourceModel> request,
-        final CallbackContext callbackContext,
-        final Logger logger) {
+            final AmazonWebServicesClientProxy proxy,
+            final ResourceHandlerRequest<ResourceModel> request,
+            final CallbackContext callbackContext,
+            final Logger logger) {
 
         final ResourceModel model = request.getDesiredResourceState();
 
@@ -22,7 +24,7 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
 
         if (model.getGroup() != null) {
 
-            AddCreatedByCloudFormationToGroupDescription(model.getGroup());
+            AddCreatedByUluruToGroupDescription(model.getGroup());
 
             ElastigroupConverter groupConverter = new ElastigroupConverter();
             Elastigroup          groupToCreate  = groupConverter.blModelToApi(model.getGroup());
@@ -43,20 +45,20 @@ public class CreateHandler extends BaseHandler<CallbackContext> {
         }
 
         return ProgressEvent.<ResourceModel, CallbackContext>builder()
-            .resourceModel(model)
-            .status(OperationStatus.SUCCESS)
-            .build();
+                .resourceModel(model)
+                .status(OperationStatus.SUCCESS)
+                .build();
     }
 
     //region Private Methods
-    private void AddCreatedByCloudFormationToGroupDescription(Group blGroup) {
+    private void AddCreatedByUluruToGroupDescription(Group blGroup) {
         String groupDescription = blGroup.getDescription();
 
         if (groupDescription != null){
-            groupDescription = groupDescription.concat(" - Created by CloudFormation Provider");
+            groupDescription = groupDescription.concat(String.format(" - %s", DESCRIPTION));
         }
         else{
-            groupDescription = "Created by CloudFormation Provider";
+            groupDescription = DESCRIPTION;
         }
 
         blGroup.setDescription(groupDescription);

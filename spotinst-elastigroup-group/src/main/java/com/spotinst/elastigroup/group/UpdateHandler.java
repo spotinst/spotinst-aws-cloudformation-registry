@@ -47,8 +47,7 @@ public class UpdateHandler extends BaseHandler<CallbackContext> {
 
         }
 
-        return ProgressEvent.<ResourceModel, CallbackContext>builder().resourceModel(model)
-                                                                      .status(OperationStatus.SUCCESS).build();
+        return ProgressEvent.<ResourceModel, CallbackContext>builder().resourceModel(model).status(OperationStatus.SUCCESS).build();
     }
 
     private void unsetNonChangeableFields(Group groupToUpdate) {

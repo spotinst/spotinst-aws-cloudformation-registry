@@ -4,6 +4,7 @@ import com.spotinst.elastigroup.group.Tag;
 import com.spotinst.elastigroup.group.*;
 import com.spotinst.sdkjava.enums.AwsVolumeTypeEnum;
 import com.spotinst.sdkjava.enums.ElastigroupOrientationEnum;
+import com.spotinst.sdkjava.enums.ScalingActionTypeEnum;
 import com.spotinst.sdkjava.enums.SchedulingTaskTypeEnum;
 import com.spotinst.sdkjava.model.BlockDeviceMapping;
 import com.spotinst.sdkjava.model.IamRole;
@@ -501,7 +502,11 @@ public class ElastigroupConverter {
             ScalingAction apiScalingAction = apiUpScalingPolicy.getAction();
 
             blScalingAction.setAdjustment(apiScalingAction.getAdjustment());
-            blScalingAction.setType(apiScalingAction.getType());
+
+            if (blScalingAction.getType() != null) {
+                blScalingAction.setType(apiScalingAction.getType().getName());
+            }
+
             blScalingAction.setMinTargetCapacity(apiScalingAction.getMinTargetCapacity());
             blScalingAction.setTarget(apiScalingAction.getTarget());
             blScalingAction.setMaximum(apiScalingAction.getMaximum());
@@ -708,6 +713,8 @@ public class ElastigroupConverter {
                 List<String> blModelSecurityGroupIds = blModelLaunchSpecification.getSecurityGroupIds();
                 apiLaunchSpecificationBuilder.setSecurityGroupIds(blModelSecurityGroupIds);
             }
+            // TODO add tenancy
+            // TODO add network interfaces
 
             apiComputeBuilder.setLaunchSpecification(apiLaunchSpecificationBuilder.build());
         }
@@ -803,7 +810,7 @@ public class ElastigroupConverter {
             Action                blScalingAction  = blScalingPolicy.getAction();
 
             apiScalingAction.setAdjustment(blScalingAction.getAdjustment());
-            apiScalingAction.setType(blScalingAction.getType());
+            apiScalingAction.setType(ScalingActionTypeEnum.fromName(blScalingAction.getType()));
             apiScalingAction.setMinTargetCapacity(blScalingAction.getMinTargetCapacity());
             apiScalingAction.setTarget(blScalingAction.getTarget());
             apiScalingAction.setMaximum(blScalingAction.getMaximum());
