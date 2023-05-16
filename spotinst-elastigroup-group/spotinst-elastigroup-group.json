@@ -2,6 +2,67 @@
   "typeName": "Spotinst::Elastigroup::Group",
   "description": "Spotinst Elastigroup Provider",
   "definitions": {
+    "tlsConfig": {
+      "type": "object",
+      "properties": {
+        "certificate": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        },
+        "tlsEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ItfLoadBalancer": {
+      "type": "object",
+      "properties": {
+        "defaultStaticTargetGroups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "arn": {
+                "type": "string"
+              },
+              "percentage": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "listenerRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ruleArn": {
+                "type": "string"
+              },
+              "staticTargetGroups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "arn": {
+                      "type": "string"
+                    },
+                    "percentage": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "loadBalancerArn": {
+          "type": "string"
+        }
+      }
+    },
     "Tag": {
       "type": "object",
       "properties": {
@@ -13,7 +74,86 @@
         }
       }
     },
-    "ScalingPolicy": {
+    "Dimension": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "MinTargetCapacityAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "adjustment": {
+          "type": "string"
+        },
+        "minTargetCapacity": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "minimum": {
+          "type": "string"
+        },
+        "maximum": {
+          "type": "string"
+        }
+      }
+    },
+    "MaxTargetCapacityAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "adjustment": {
+          "type": "string"
+        },
+        "maxTargetCapacity": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "minimum": {
+          "type": "string"
+        },
+        "maximum": {
+          "type": "string"
+        }
+      }
+    },
+    "ScalingDownStepAdjustment": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/MaxTargetCapacityAction"
+        },
+        "threshold": {
+          "type": "integer"
+        }
+      }
+    },
+    "ScalingUpStepAdjustment": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/MinTargetCapacityAction"
+        },
+        "threshold": {
+          "type": "integer"
+        }
+      }
+    },
+    "ScalingDownPolicy": {
       "type": "object",
       "properties": {
         "policyName": {
@@ -56,71 +196,74 @@
           "type": "array",
           "title": "dimensions",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/definitions/Dimension"
           }
         },
         "stepAdjustments": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "action": {
-                "properties": {
-                  "type": {
-                    "type": "string"
-                  },
-                  "adjustment": {
-                    "type": "string"
-                  },
-                  "maxTargetCapacity": {
-                    "type": "string"
-                  },
-                  "target": {
-                    "type": "string"
-                  },
-                  "minimum": {
-                    "type": "string"
-                  },
-                  "maximum": {
-                    "type": "string"
-                  }
-                }
-              },
-              "threshold": {
-                "type": "integer"
-              }
-            }
+            "$ref": "#/definitions/ScalingDownStepAdjustment"
           }
         },
         "action": {
-          "properties": {
-            "type": {
-              "type": "string"
-            },
-            "adjustment": {
-              "type": "string"
-            },
-            "minTargetCapacity": {
-              "type": "string"
-            },
-            "target": {
-              "type": "string"
-            },
-            "minimum": {
-              "type": "string"
-            },
-            "maximum": {
-              "type": "string"
-            }
+          "$ref": "#/definitions/MinTargetCapacityAction"
+        }
+      }
+    },
+    "ScalingUpPolicy": {
+      "type": "object",
+      "properties": {
+        "policyName": {
+          "type": "string"
+        },
+        "metricName": {
+          "type": "string"
+        },
+        "statistic": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "threshold": {
+          "type": "number"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "evaluationPeriods": {
+          "type": "integer"
+        },
+        "extendedStatistic": {
+          "type": "string"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "cooldown": {
+          "type": "integer"
+        },
+        "dimension": {
+          "type": "array",
+          "title": "dimensions",
+          "items": {
+            "$ref": "#/definitions/Dimension"
           }
+        },
+        "stepAdjustments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScalingUpStepAdjustment"
+          }
+        },
+        "action": {
+          "$ref": "#/definitions/MinTargetCapacityAction"
         }
       }
     },
@@ -197,6 +340,69 @@
         }
       }
     },
+    "Headroom": {
+      "type": "object",
+      "properties": {
+        "cpuPerUnit": {
+          "type": "integer"
+        },
+        "memoryPerUnit": {
+          "type": "integer"
+        },
+        "numOfUnits": {
+          "type": "integer"
+        }
+      }
+    },
+    "AutoScaleDown": {
+      "type": "object",
+      "properties": {
+        "evaluationPeriods": {
+          "type": "integer"
+        },
+        "maxScaleDownPercentage": {
+          "type": "integer"
+        }
+      }
+    },
+    "dockerSwarmAutoScale": {
+      "type": "object",
+      "properties": {
+        "cooldown": {
+          "type": "integer"
+        },
+        "down": {
+          "type": "object",
+          "$ref": "#/definitions/AutoScaleDown"
+        },
+        "headroom": {
+          "type": "object",
+          "$ref": "#/definitions/Headroom"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "tlsConfig": {
+          "type": "object",
+          "$ref": "#/definitions/tlsConfig"
+        }
+      }
+    },
+    "dockerSwarm": {
+      "type": "object",
+      "properties": {
+        "autoScale": {
+          "type": "object",
+          "$ref": "#/definitions/dockerSwarmAutoScale"
+        },
+        "masterHost": {
+          "type": "string"
+        },
+        "masterPort": {
+          "type": "integer"
+        }
+      }
+    },
     "ecs": {
       "type": "object",
       "properties": {
@@ -223,28 +429,11 @@
             },
             "headroom": {
               "type": "object",
-              "properties": {
-                "cpuPerUnit": {
-                  "type": "integer"
-                },
-                "memoryPerUnit": {
-                  "type": "integer"
-                },
-                "numOfUnits": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/Headroom"
             },
             "down": {
               "type": "object",
-              "properties": {
-                "evaluationPeriods": {
-                  "type": "integer"
-                },
-                "maxScaleDownPercentage": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/AutoScaleDown"
             },
             "attributes": {
               "type": "array",
@@ -292,6 +481,203 @@
               }
             }
           }
+        }
+      }
+    },
+    "elasticBeanstalkStrategy": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "shouldDrainInstances": {
+          "type": "boolean"
+        }
+      }
+    },
+    "elasticBeanstalk": {
+      "type": "object",
+      "properties": {
+        "deploymentPreferences": {
+          "type": "object",
+          "properties": {
+            "automaticRoll": {
+              "type": "boolean"
+            },
+            "batchSizePercentage": {
+              "type": "integer"
+            },
+            "gracePeriod": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "object",
+              "$ref": "#/definitions/elasticBeanstalkStrategy"
+            }
+          }
+        },
+        "environmentId": {
+          "type": "string"
+        },
+        "managedActions": {
+          "type": "object",
+          "properties": {
+            "platformUpdate": {
+              "type": "object",
+              "properties": {
+                "instanceRefreshEnabled": {
+                  "type": "boolean"
+                },
+                "performAt": {
+                  "type": "string"
+                },
+                "timeWindow": {
+                  "type": "string"
+                },
+                "updateLevel": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "kubernetesHeadroom": {
+      "type": "object",
+      "properties": {
+        "cpuPerUnit": {
+          "type": "integer"
+        },
+        "gpuPerUnit": {
+          "type": "integer"
+        },
+        "memoryPerUnit": {
+          "type": "integer"
+        },
+        "numOfUnits": {
+          "type": "integer"
+        }
+      }
+    },
+    "kubernetesAutoScale": {
+      "type": "object",
+      "properties": {
+        "cooldown": {
+          "type": "integer"
+        },
+        "down": {
+          "type": "object",
+          "properties": {
+            "evaluationPeriods": {
+              "type": "integer"
+            },
+            "headroom": {
+              "type": "object",
+              "$ref": "#/definitions/kubernetesHeadroom"
+            },
+            "maxScaleDownPercentage": {
+              "type": "integer"
+            }
+          }
+        },
+        "isAutoConfig": {
+          "type": "boolean"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "kubernetes": {
+      "type": "object",
+      "properties": {
+        "autoScale": {
+          "type": "object",
+          "$ref": "#/definitions/kubernetesAutoScale"
+        },
+        "clusterIdentifier": {
+          "type": "string"
+        },
+        "integrationMode": {
+          "type": "string"
+        }
+      }
+    },
+    "nomadScaleDown": {
+      "type": "object",
+      "properties": {
+        "evaluationPeriods": {
+          "type": "integer"
+        }
+      }
+    },
+    "nomadAutoScale": {
+      "type": "object",
+      "properties": {
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cooldown": {
+          "type": "integer"
+        },
+        "down": {
+          "type": "object",
+          "$ref": "#/definitions/nomadScaleDown"
+        },
+        "headroom": {
+          "type": "object",
+          "$ref": "#/definitions/Headroom"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "nomad": {
+      "type": "object",
+      "properties": {
+        "aclToken": {
+          "type": "string"
+        },
+        "autoScale": {
+          "type": "object",
+          "$ref": "#/definitions/nomadAutoScale"
+        },
+        "masterHost": {
+          "type": "string"
+        },
+        "masterPort": {
+          "type": "integer"
+        },
+        "tlsConfig": {
+          "type": "object",
+          "$ref": "#/definitions/tlsConfig"
         }
       }
     },
@@ -604,51 +990,7 @@
                     "loadBalancers": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "defaultStaticTargetGroups": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "arn": {
-                                  "type": "string"
-                                },
-                                "percentage": {
-                                  "type": "number"
-                                }
-                              }
-                            }
-                          },
-                          "listenerRules": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "ruleArn": {
-                                  "type": "string"
-                                },
-                                "staticTargetGroups": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "arn": {
-                                        "type": "string"
-                                      },
-                                      "percentage": {
-                                        "type": "number"
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "loadBalancerArn": {
-                            "type": "string"
-                          }
-                        }
+                        "$ref": "#/definitions/ItfLoadBalancer"
                       }
                     },
                     "migrationHealthinessThreshold": {
@@ -890,229 +1232,13 @@
             "up": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "policyName": {
-                    "type": "string"
-                  },
-                  "metricName": {
-                    "type": "string"
-                  },
-                  "statistic": {
-                    "type": "string"
-                  },
-                  "unit": {
-                    "type": "string"
-                  },
-                  "threshold": {
-                    "type": "number"
-                  },
-                  "namespace": {
-                    "type": "string"
-                  },
-                  "period": {
-                    "type": "integer"
-                  },
-                  "evaluationPeriods": {
-                    "type": "integer"
-                  },
-                  "extendedStatistic": {
-                    "type": "string"
-                  },
-                  "isEnabled": {
-                    "type": "boolean"
-                  },
-                  "operator": {
-                    "type": "string"
-                  },
-                  "cooldown": {
-                    "type": "integer"
-                  },
-                  "dimension": {
-                    "type": "array",
-                    "title": "dimensions",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "value": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "stepAdjustments": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "action": {
-                          "properties": {
-                            "type": {
-                              "type": "string"
-                            },
-                            "adjustment": {
-                              "type": "string"
-                            },
-                            "minTargetCapacity": {
-                              "type": "string"
-                            },
-                            "target": {
-                              "type": "string"
-                            },
-                            "minimum": {
-                              "type": "string"
-                            },
-                            "maximum": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "threshold": {
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  },
-                  "action": {
-                    "properties": {
-                      "type": {
-                        "type": "string"
-                      },
-                      "adjustment": {
-                        "type": "string"
-                      },
-                      "minTargetCapacity": {
-                        "type": "string"
-                      },
-                      "target": {
-                        "type": "string"
-                      },
-                      "minimum": {
-                        "type": "string"
-                      },
-                      "maximum": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
+                "$ref": "#/definitions/ScalingUpPolicy"
               }
             },
             "down": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "policyName": {
-                    "type": "string"
-                  },
-                  "metricName": {
-                    "type": "string"
-                  },
-                  "statistic": {
-                    "type": "string"
-                  },
-                  "unit": {
-                    "type": "string"
-                  },
-                  "threshold": {
-                    "type": "number"
-                  },
-                  "namespace": {
-                    "type": "string"
-                  },
-                  "period": {
-                    "type": "integer"
-                  },
-                  "evaluationPeriods": {
-                    "type": "integer"
-                  },
-                  "extendedStatistic": {
-                    "type": "string"
-                  },
-                  "isEnabled": {
-                    "type": "boolean"
-                  },
-                  "operator": {
-                    "type": "string"
-                  },
-                  "cooldown": {
-                    "type": "integer"
-                  },
-                  "dimension": {
-                    "type": "array",
-                    "title": "dimensions",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "value": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "stepAdjustments": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "action": {
-                          "properties": {
-                            "type": {
-                              "type": "string"
-                            },
-                            "adjustment": {
-                              "type": "string"
-                            },
-                            "maxTargetCapacity": {
-                              "type": "string"
-                            },
-                            "target": {
-                              "type": "string"
-                            },
-                            "minimum": {
-                              "type": "string"
-                            },
-                            "maximum": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "threshold": {
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  },
-                  "action": {
-                    "properties": {
-                      "type": {
-                        "type": "string"
-                      },
-                      "adjustment": {
-                        "type": "string"
-                      },
-                      "minTargetCapacity": {
-                        "type": "string"
-                      },
-                      "target": {
-                        "type": "string"
-                      },
-                      "minimum": {
-                        "type": "string"
-                      },
-                      "maximum": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
+                "$ref": "#/definitions/ScalingDownPolicy"
               }
             },
             "multipleMetrics": {
@@ -1259,64 +1385,7 @@
             },
             "dockerSwarm": {
               "type": "object",
-              "properties": {
-                "autoScale": {
-                  "type": "object",
-                  "properties": {
-                    "cooldown": {
-                      "type": "integer"
-                    },
-                    "down": {
-                      "type": "object",
-                      "properties": {
-                        "evaluationPeriods": {
-                          "type": "integer"
-                        },
-                        "maxScaleDownPercentage": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "headroom": {
-                      "type": "object",
-                      "properties": {
-                        "cpuPerUnit": {
-                          "type": "integer"
-                        },
-                        "memoryPerUnit": {
-                          "type": "integer"
-                        },
-                        "numOfUnits": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "isEnabled": {
-                      "type": "boolean"
-                    },
-                    "tlsConfig": {
-                      "type": "object",
-                      "properties": {
-                        "certificate": {
-                          "type": "string"
-                        },
-                        "privateKey": {
-                          "type": "string"
-                        },
-                        "tlsEnabled": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                },
-                "masterHost": {
-                  "type": "string"
-                },
-                "masterPort": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/dockerSwarm"
             },
             "ecs": {
               "type": "object",
@@ -1324,58 +1393,7 @@
             },
             "elasticBeanstalk": {
               "type": "object",
-              "properties": {
-                "deploymentPreferences": {
-                  "type": "object",
-                  "properties": {
-                    "automaticRoll": {
-                      "type": "boolean"
-                    },
-                    "batchSizePercentage": {
-                      "type": "integer"
-                    },
-                    "gracePeriod": {
-                      "type": "integer"
-                    },
-                    "strategy": {
-                      "type": "object",
-                      "properties": {
-                        "action": {
-                          "type": "string"
-                        },
-                        "shouldDrainInstances": {
-                          "type": "boolean"
-                        }
-                      }
-                    }
-                  }
-                },
-                "environmentId": {
-                  "type": "string"
-                },
-                "managedActions": {
-                  "type": "object",
-                  "properties": {
-                    "platformUpdate": {
-                      "type": "object",
-                      "properties": {
-                        "instanceRefreshEnabled": {
-                          "type": "boolean"
-                        },
-                        "performAt": {
-                          "type": "string"
-                        },
-                        "timeWindow": {
-                          "type": "string"
-                        },
-                        "updateLevel": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/elasticBeanstalk"
             },
             "jenkins": {
               "type": "object",
@@ -1420,70 +1438,7 @@
             },
             "kubernetes": {
               "type": "object",
-              "properties": {
-                "autoScale": {
-                  "type": "object",
-                  "properties": {
-                    "cooldown": {
-                      "type": "integer"
-                    },
-                    "down": {
-                      "type": "object",
-                      "properties": {
-                        "evaluationPeriods": {
-                          "type": "integer"
-                        },
-                        "headroom": {
-                          "type": "object",
-                          "properties": {
-                            "cpuPerUnit": {
-                              "type": "integer"
-                            },
-                            "gpuPerUnit": {
-                              "type": "integer"
-                            },
-                            "memoryPerUnit": {
-                              "type": "integer"
-                            },
-                            "numOfUnits": {
-                              "type": "integer"
-                            }
-                          }
-                        },
-                        "maxScaleDownPercentage": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "isAutoConfig": {
-                      "type": "boolean"
-                    },
-                    "isEnabled": {
-                      "type": "boolean"
-                    },
-                    "labels": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "key": {
-                            "type": "string"
-                          },
-                          "value": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "clusterIdentifier": {
-                  "type": "string"
-                },
-                "integrationMode": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/definitions/kubernetes"
             },
             "mesosphere": {
               "type": "object",
@@ -1503,78 +1458,7 @@
             },
             "nomad": {
               "type": "object",
-              "properties": {
-                "aclToken": {
-                  "type": "string"
-                },
-                "autoScale": {
-                  "type": "object",
-                  "properties": {
-                    "constraints": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "key": {
-                            "type": "string"
-                          },
-                          "value": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    },
-                    "cooldown": {
-                      "type": "integer"
-                    },
-                    "down": {
-                      "type": "object",
-                      "properties": {
-                        "evaluationPeriods": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "headroom": {
-                      "type": "object",
-                      "properties": {
-                        "cpuPerUnit": {
-                          "type": "integer"
-                        },
-                        "memoryPerUnit": {
-                          "type": "integer"
-                        },
-                        "numOfUnits": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "isEnabled": {
-                      "type": "boolean"
-                    }
-                  }
-                },
-                "masterHost": {
-                  "type": "string"
-                },
-                "masterPort": {
-                  "type": "integer"
-                },
-                "tlsConfig": {
-                  "type": "object",
-                  "properties": {
-                    "certificate": {
-                      "type": "string"
-                    },
-                    "privateKey": {
-                      "type": "string"
-                    },
-                    "tlsEnabled": {
-                      "type": "boolean"
-                    }
-                  }
-                }
-              }
+              "$ref": "#/definitions/nomad"
             },
             "opsWorks": {
               "type": "object",
