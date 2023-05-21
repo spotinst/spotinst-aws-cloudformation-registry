@@ -10,8 +10,6 @@
             "spotinst",
             "elastigroup",
             "group"
-        ],
-        "protocolVersion": "2.0.0"
-    },
-    "executableEntrypoint": "com.spotinst.elastigroup.group.HandlerWrapperExecutable"
+        ]
+    }
 }
