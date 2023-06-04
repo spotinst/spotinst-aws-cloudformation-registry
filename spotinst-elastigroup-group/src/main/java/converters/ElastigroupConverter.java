@@ -105,7 +105,7 @@ public class ElastigroupConverter {
             }
 
             if (blGroup.getScheduling() != null) {
-                Scheduling                                 blScheduling  = blGroup.getScheduling();
+                Scheduling blScheduling = blGroup.getScheduling();
                 ElastigroupSchedulingConfiguration.Builder apiScheduling =
                         ElastigroupSchedulingConfiguration.Builder.get();
 
@@ -279,8 +279,8 @@ public class ElastigroupConverter {
             }
 
             if (apiLaunchSpecification.getHealthCheckGracePeriod() != null) {
-                blModelLaunchSpecification
-                        .setHealthCheckGracePeriod(apiLaunchSpecification.getHealthCheckGracePeriod());
+                blModelLaunchSpecification.setHealthCheckGracePeriod(
+                        apiLaunchSpecification.getHealthCheckGracePeriod());
             }
             // TODO add tenancy
             blModelCompute.setLaunchSpecification(blModelLaunchSpecification);
@@ -294,11 +294,11 @@ public class ElastigroupConverter {
         Scaling blScaling = new Scaling();
 
         if (apiScaling.getUp() != null) {
-            List<com.spotinst.elastigroup.group.ScalingPolicy> blUpScalingPolicies  = new LinkedList<>();
-            List<ScalingPolicy>                                apiUpScalingPolicies = apiScaling.getUp();
+            List<com.spotinst.elastigroup.group.ScalingUpPolicy> blUpScalingPolicies  = new LinkedList<>();
+            List<ScalingPolicy>                                  apiUpScalingPolicies = apiScaling.getUp();
             for (ScalingPolicy apiUpScalingPolicy : apiUpScalingPolicies) {
-                com.spotinst.elastigroup.group.ScalingPolicy blScalingPolicy =
-                        convertApiScalingPolicyToBl(apiUpScalingPolicy);
+                com.spotinst.elastigroup.group.ScalingUpPolicy blScalingPolicy =
+                        convertApiScalingUpPolicyToBl(apiUpScalingPolicy);
                 blUpScalingPolicies.add(blScalingPolicy);
             }
 
@@ -306,11 +306,11 @@ public class ElastigroupConverter {
         }
 
         if (apiScaling.getDown() != null) {
-            List<com.spotinst.elastigroup.group.ScalingPolicy> blDownScalingPolicies  = new LinkedList<>();
-            List<ScalingPolicy>                                apiDownScalingPolicies = apiScaling.getDown();
+            List<com.spotinst.elastigroup.group.ScalingDownPolicy> blDownScalingPolicies  = new LinkedList<>();
+            List<ScalingPolicy>                                    apiDownScalingPolicies = apiScaling.getDown();
             for (ScalingPolicy apiDownScalingPolicy : apiDownScalingPolicies) {
-                com.spotinst.elastigroup.group.ScalingPolicy blScalingPolicy =
-                        convertApiScalingPolicyToBl(apiDownScalingPolicy);
+                com.spotinst.elastigroup.group.ScalingDownPolicy blScalingPolicy =
+                        convertApiScalingDownPolicyToBl(apiDownScalingPolicy);
                 blDownScalingPolicies.add(blScalingPolicy);
             }
 
@@ -334,7 +334,7 @@ public class ElastigroupConverter {
             }
 
             if (blEcs.getAutoScale() != null) {
-                AutoScale                                 blEcsAutoScale      = blEcs.getAutoScale();
+                AutoScale blEcsAutoScale = blEcs.getAutoScale();
                 ElastigroupAutoScaleSpecification.Builder apiAutoScaleBuilder =
                         ElastigroupAutoScaleSpecification.Builder.get();
 
@@ -351,12 +351,12 @@ public class ElastigroupConverter {
                 }
 
                 if (blEcsAutoScale.getShouldScaleDownNonServiceTasks() != null) {
-                    apiAutoScaleBuilder
-                            .setShouldScaleDownNonServiceTasks(blEcsAutoScale.getShouldScaleDownNonServiceTasks());
+                    apiAutoScaleBuilder.setShouldScaleDownNonServiceTasks(
+                            blEcsAutoScale.getShouldScaleDownNonServiceTasks());
                 }
 
                 if (blEcsAutoScale.getHeadroom() != null) {
-                    Headroom                                 blHeadroom  = blEcsAutoScale.getHeadroom();
+                    Headroom blHeadroom = blEcsAutoScale.getHeadroom();
                     ElastigroupHeadroomSpecification.Builder apiHeadroom =
                             ElastigroupHeadroomSpecification.Builder.get();
 
@@ -376,7 +376,7 @@ public class ElastigroupConverter {
                 }
 
                 if (blEcsAutoScale.getDown() != null) {
-                    Down                                 blAutoScaleDown  = blEcsAutoScale.getDown();
+                    AutoScaleDown                        blAutoScaleDown  = blEcsAutoScale.getDown();
                     ElastigroupDownSpecification.Builder apiAutoScaleDown = ElastigroupDownSpecification.Builder.get();
 
                     if (blAutoScaleDown.getEvaluationPeriods() != null) {
@@ -418,8 +418,8 @@ public class ElastigroupConverter {
                 }
 
                 if (blOptimizeImages.getPerformAt() != null) {
-                    apiOptimizedImages
-                            .setPerformAt(MaintenanceWindowTypeEnum.fromName(blOptimizeImages.getPerformAt()));
+                    apiOptimizedImages.setPerformAt(
+                            MaintenanceWindowTypeEnum.fromName(blOptimizeImages.getPerformAt()));
                 }
 
                 if (blOptimizeImages.getTimeWindows() != null) {
@@ -444,8 +444,9 @@ public class ElastigroupConverter {
         apiGroupBuilder.setThirdPartiesIntegration(apiThirdPartyBuilder.build());
     }
 
-    private com.spotinst.elastigroup.group.ScalingPolicy convertApiScalingPolicyToBl(ScalingPolicy apiUpScalingPolicy) {
-        com.spotinst.elastigroup.group.ScalingPolicy retVal = new com.spotinst.elastigroup.group.ScalingPolicy();
+    private com.spotinst.elastigroup.group.ScalingUpPolicy convertApiScalingUpPolicyToBl(
+            ScalingPolicy apiUpScalingPolicy) {
+        com.spotinst.elastigroup.group.ScalingUpPolicy retVal = new com.spotinst.elastigroup.group.ScalingUpPolicy();
 
         if (apiUpScalingPolicy.getPolicyName() != null) {
             retVal.setPolicyName(apiUpScalingPolicy.getPolicyName());
@@ -498,8 +499,84 @@ public class ElastigroupConverter {
         }
 
         if (apiUpScalingPolicy.getAction() != null) {
-            Action        blScalingAction  = new Action();
-            ScalingAction apiScalingAction = apiUpScalingPolicy.getAction();
+            MinTargetCapacityAction blScalingAction  = new MinTargetCapacityAction();
+            ScalingAction           apiScalingAction = apiUpScalingPolicy.getAction();
+
+            blScalingAction.setAdjustment(apiScalingAction.getAdjustment());
+
+            if (blScalingAction.getType() != null) {
+                blScalingAction.setType(apiScalingAction.getType().getName());
+            }
+
+            blScalingAction.setMinTargetCapacity(apiScalingAction.getMinTargetCapacity());
+            blScalingAction.setTarget(apiScalingAction.getTarget());
+            blScalingAction.setMaximum(apiScalingAction.getMaximum());
+            blScalingAction.setMinimum(apiScalingAction.getMinimum());
+
+            retVal.setAction(blScalingAction);
+        }
+
+        return retVal;
+    }
+
+    private com.spotinst.elastigroup.group.ScalingDownPolicy convertApiScalingDownPolicyToBl(
+            ScalingPolicy apiUpScalingPolicy) {
+        com.spotinst.elastigroup.group.ScalingDownPolicy retVal =
+                new com.spotinst.elastigroup.group.ScalingDownPolicy();
+
+        if (apiUpScalingPolicy.getPolicyName() != null) {
+            retVal.setPolicyName(apiUpScalingPolicy.getPolicyName());
+        }
+
+        if (apiUpScalingPolicy.getMetricName() != null) {
+            retVal.setMetricName(apiUpScalingPolicy.getMetricName());
+        }
+
+        if (apiUpScalingPolicy.getStatistic() != null) {
+            retVal.setStatistic(apiUpScalingPolicy.getStatistic());
+        }
+
+        if (apiUpScalingPolicy.getUnit() != null) {
+            retVal.setUnit(apiUpScalingPolicy.getUnit());
+        }
+
+        if (apiUpScalingPolicy.getThreshold() != null) {
+            Double threshold = new Double(apiUpScalingPolicy.getThreshold());
+            retVal.setThreshold(threshold);
+        }
+
+        if (apiUpScalingPolicy.getNamespace() != null) {
+            retVal.setNamespace(apiUpScalingPolicy.getNamespace());
+        }
+
+        if (apiUpScalingPolicy.getPeriod() != null) {
+            retVal.setPeriod(apiUpScalingPolicy.getPeriod());
+        }
+
+        if (apiUpScalingPolicy.getEvaluationPeriods() != null) {
+            retVal.setEvaluationPeriods(apiUpScalingPolicy.getEvaluationPeriods());
+        }
+
+        if (apiUpScalingPolicy.getCooldown() != null) {
+            retVal.setCooldown(apiUpScalingPolicy.getCooldown());
+        }
+
+        if (apiUpScalingPolicy.getDimensions() != null) {
+            List<Dimension> blScalingDimensionsList = new LinkedList<>();
+            for (ScalingDimension apiDimension : apiUpScalingPolicy.getDimensions()) {
+                Dimension blScalingDimension = new Dimension();
+                blScalingDimension.setName(apiDimension.getName());
+                blScalingDimension.setValue(apiDimension.getValue());
+
+                blScalingDimensionsList.add(blScalingDimension);
+            }
+
+            retVal.setDimension(blScalingDimensionsList);
+        }
+
+        if (apiUpScalingPolicy.getAction() != null) {
+            MinTargetCapacityAction blScalingAction  = new MinTargetCapacityAction();
+            ScalingAction           apiScalingAction = apiUpScalingPolicy.getAction();
 
             blScalingAction.setAdjustment(apiScalingAction.getAdjustment());
 
@@ -657,15 +734,14 @@ public class ElastigroupConverter {
             }
 
             if (blModelLaunchSpecification.getHealthCheckGracePeriod() != null) {
-                apiLaunchSpecificationBuilder
-                        .setHealthCheckGracePeriod(blModelLaunchSpecification.getHealthCheckGracePeriod());
+                apiLaunchSpecificationBuilder.setHealthCheckGracePeriod(
+                        blModelLaunchSpecification.getHealthCheckGracePeriod());
             }
 
             if (blModelLaunchSpecification.getBlockDeviceMappings() != null) {
                 List<BlockDeviceMapping> apiBlockDeviceMappingsList = new LinkedList<>();
 
-                for (com.spotinst.elastigroup.group.BlockDeviceMapping blockDeviceMapping : blModelLaunchSpecification
-                        .getBlockDeviceMappings()) {
+                for (com.spotinst.elastigroup.group.BlockDeviceMapping blockDeviceMapping : blModelLaunchSpecification.getBlockDeviceMappings()) {
                     BlockDeviceMapping.Builder apiBlockDeviceMappingBuilder = BlockDeviceMapping.Builder.get();
 
                     apiBlockDeviceMappingBuilder.setDeviceName(blockDeviceMapping.getDeviceName());
@@ -727,10 +803,10 @@ public class ElastigroupConverter {
         ElastigroupScalingConfiguration.Builder apiScalingBuilder = ElastigroupScalingConfiguration.Builder.get();
 
         if (blScaling.getUp() != null) {
-            List<com.spotinst.elastigroup.group.ScalingPolicy> blUpScalingPolicies  = blScaling.getUp();
-            List<ScalingPolicy>                                apiUpScalingPolicies = new LinkedList<>();
-            for (com.spotinst.elastigroup.group.ScalingPolicy blScalingPolicy : blUpScalingPolicies) {
-                ScalingPolicy apiUpScalingPolicy = convertBlScalingPolicyToApi(blScalingPolicy);
+            List<com.spotinst.elastigroup.group.ScalingUpPolicy> blUpScalingPolicies  = blScaling.getUp();
+            List<ScalingPolicy>                                  apiUpScalingPolicies = new LinkedList<>();
+            for (com.spotinst.elastigroup.group.ScalingUpPolicy blScalingPolicy : blUpScalingPolicies) {
+                ScalingPolicy apiUpScalingPolicy = convertBlScalingUpPolicyToApi(blScalingPolicy);
                 apiUpScalingPolicies.add(apiUpScalingPolicy);
             }
 
@@ -738,10 +814,10 @@ public class ElastigroupConverter {
         }
 
         if (blScaling.getDown() != null) {
-            List<com.spotinst.elastigroup.group.ScalingPolicy> blDownScalingPolicies  = blScaling.getDown();
-            List<ScalingPolicy>                                apiDownScalingPolicies = new LinkedList<>();
-            for (com.spotinst.elastigroup.group.ScalingPolicy blScalingPolicy : blDownScalingPolicies) {
-                ScalingPolicy apiDownScalingPolicy = convertBlScalingPolicyToApi(blScalingPolicy);
+            List<com.spotinst.elastigroup.group.ScalingDownPolicy> blDownScalingPolicies  = blScaling.getDown();
+            List<ScalingPolicy>                                    apiDownScalingPolicies = new LinkedList<>();
+            for (com.spotinst.elastigroup.group.ScalingDownPolicy blScalingPolicy : blDownScalingPolicies) {
+                ScalingPolicy apiDownScalingPolicy = convertBlScalingDownPolicyToApi(blScalingPolicy);
                 apiDownScalingPolicies.add(apiDownScalingPolicy);
             }
 
@@ -751,7 +827,8 @@ public class ElastigroupConverter {
         groupBuilder.setScaling(apiScalingBuilder.build());
     }
 
-    private ScalingPolicy convertBlScalingPolicyToApi(com.spotinst.elastigroup.group.ScalingPolicy blScalingPolicy) {
+    private ScalingPolicy convertBlScalingUpPolicyToApi(
+            com.spotinst.elastigroup.group.ScalingUpPolicy blScalingPolicy) {
         ScalingPolicy.Builder apiScalingPolicyBuilder = ScalingPolicy.Builder.get();
         ScalingPolicy         retVal;
 
@@ -806,8 +883,8 @@ public class ElastigroupConverter {
         }
 
         if (blScalingPolicy.getAction() != null) {
-            ScalingAction.Builder apiScalingAction = ScalingAction.Builder.get();
-            Action                blScalingAction  = blScalingPolicy.getAction();
+            ScalingAction.Builder   apiScalingAction = ScalingAction.Builder.get();
+            MinTargetCapacityAction blScalingAction  = blScalingPolicy.getAction();
 
             apiScalingAction.setAdjustment(blScalingAction.getAdjustment());
             apiScalingAction.setType(ScalingActionTypeEnum.fromName(blScalingAction.getType()));
@@ -823,6 +900,81 @@ public class ElastigroupConverter {
 
         return retVal;
     }
+
+    private ScalingPolicy convertBlScalingDownPolicyToApi(
+            com.spotinst.elastigroup.group.ScalingDownPolicy blScalingPolicy) {
+        ScalingPolicy.Builder apiScalingPolicyBuilder = ScalingPolicy.Builder.get();
+        ScalingPolicy         retVal;
+
+        if (blScalingPolicy.getPolicyName() != null) {
+            apiScalingPolicyBuilder.setPolicyName(blScalingPolicy.getPolicyName());
+        }
+
+        if (blScalingPolicy.getMetricName() != null) {
+            apiScalingPolicyBuilder.setMetricName(blScalingPolicy.getMetricName());
+        }
+
+        if (blScalingPolicy.getStatistic() != null) {
+            apiScalingPolicyBuilder.setStatistic(blScalingPolicy.getStatistic());
+        }
+
+        if (blScalingPolicy.getUnit() != null) {
+            apiScalingPolicyBuilder.setUnit(blScalingPolicy.getUnit());
+        }
+
+        if (blScalingPolicy.getThreshold() != null) {
+            Float threshold = new Float(blScalingPolicy.getThreshold());
+            apiScalingPolicyBuilder.setThreshold(threshold);
+        }
+
+        if (blScalingPolicy.getNamespace() != null) {
+            apiScalingPolicyBuilder.setNamespace(blScalingPolicy.getNamespace());
+        }
+
+        if (blScalingPolicy.getPeriod() != null) {
+            apiScalingPolicyBuilder.setPeriod(blScalingPolicy.getPeriod());
+        }
+
+        if (blScalingPolicy.getEvaluationPeriods() != null) {
+            apiScalingPolicyBuilder.setEvaluationPeriods(blScalingPolicy.getEvaluationPeriods());
+        }
+
+        if (blScalingPolicy.getCooldown() != null) {
+            apiScalingPolicyBuilder.setCooldown(blScalingPolicy.getCooldown());
+        }
+
+        if (blScalingPolicy.getDimension() != null) {
+            List<ScalingDimension> apiScalingDimensionList = new LinkedList<>();
+            for (Dimension blDimesion : blScalingPolicy.getDimension()) {
+                ScalingDimension.Builder apiScalingDimensionBuilder = ScalingDimension.Builder.get();
+                apiScalingDimensionBuilder.setName(blDimesion.getName());
+                apiScalingDimensionBuilder.setValue(blDimesion.getValue());
+
+                apiScalingDimensionList.add(apiScalingDimensionBuilder.build());
+            }
+
+            apiScalingPolicyBuilder.setDimensions(apiScalingDimensionList);
+        }
+
+        if (blScalingPolicy.getAction() != null) {
+            ScalingAction.Builder   apiScalingAction = ScalingAction.Builder.get();
+            MinTargetCapacityAction blScalingAction  = blScalingPolicy.getAction();
+
+            apiScalingAction.setAdjustment(blScalingAction.getAdjustment());
+            apiScalingAction.setType(ScalingActionTypeEnum.fromName(blScalingAction.getType()));
+            apiScalingAction.setMinTargetCapacity(blScalingAction.getMinTargetCapacity());
+            apiScalingAction.setTarget(blScalingAction.getTarget());
+            apiScalingAction.setMaximum(blScalingAction.getMaximum());
+            apiScalingAction.setMinimum(blScalingAction.getMinimum());
+
+            apiScalingPolicyBuilder.setAction(apiScalingAction.build());
+        }
+
+        retVal = apiScalingPolicyBuilder.build();
+
+        return retVal;
+    }
+
     //endregion
     //endregion
 

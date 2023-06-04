@@ -2,6 +2,67 @@
   "typeName": "Spotinst::Elastigroup::Group",
   "description": "Spotinst Elastigroup Provider",
   "definitions": {
+    "tlsConfig": {
+      "type": "object",
+      "properties": {
+        "certificate": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        },
+        "tlsEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ItfLoadBalancer": {
+      "type": "object",
+      "properties": {
+        "defaultStaticTargetGroups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "arn": {
+                "type": "string"
+              },
+              "percentage": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "listenerRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ruleArn": {
+                "type": "string"
+              },
+              "staticTargetGroups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "arn": {
+                      "type": "string"
+                    },
+                    "percentage": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "loadBalancerArn": {
+          "type": "string"
+        }
+      }
+    },
     "Tag": {
       "type": "object",
       "properties": {
@@ -13,7 +74,86 @@
         }
       }
     },
-    "ScalingPolicy": {
+    "Dimension": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "MinTargetCapacityAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "adjustment": {
+          "type": "string"
+        },
+        "minTargetCapacity": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "minimum": {
+          "type": "string"
+        },
+        "maximum": {
+          "type": "string"
+        }
+      }
+    },
+    "MaxTargetCapacityAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "adjustment": {
+          "type": "string"
+        },
+        "maxTargetCapacity": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "minimum": {
+          "type": "string"
+        },
+        "maximum": {
+          "type": "string"
+        }
+      }
+    },
+    "ScalingDownStepAdjustment": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/MaxTargetCapacityAction"
+        },
+        "threshold": {
+          "type": "integer"
+        }
+      }
+    },
+    "ScalingUpStepAdjustment": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/MinTargetCapacityAction"
+        },
+        "threshold": {
+          "type": "integer"
+        }
+      }
+    },
+    "ScalingDownPolicy": {
       "type": "object",
       "properties": {
         "policyName": {
@@ -40,6 +180,15 @@
         "evaluationPeriods": {
           "type": "integer"
         },
+        "extendedStatistic": {
+          "type": "string"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "operator": {
+          "type": "string"
+        },
         "cooldown": {
           "type": "integer"
         },
@@ -47,38 +196,74 @@
           "type": "array",
           "title": "dimensions",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
+            "$ref": "#/definitions/Dimension"
+          }
+        },
+        "stepAdjustments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScalingDownStepAdjustment"
           }
         },
         "action": {
-          "properties": {
-            "type": {
-              "type": "string"
-            },
-            "adjustment": {
-              "type": "string"
-            },
-            "minTargetCapacity": {
-              "type": "string"
-            },
-            "target": {
-              "type": "string"
-            },
-            "minimum": {
-              "type": "string"
-            },
-            "maximum": {
-              "type": "string"
-            }
+          "$ref": "#/definitions/MinTargetCapacityAction"
+        }
+      }
+    },
+    "ScalingUpPolicy": {
+      "type": "object",
+      "properties": {
+        "policyName": {
+          "type": "string"
+        },
+        "metricName": {
+          "type": "string"
+        },
+        "statistic": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "threshold": {
+          "type": "number"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "period": {
+          "type": "integer"
+        },
+        "evaluationPeriods": {
+          "type": "integer"
+        },
+        "extendedStatistic": {
+          "type": "string"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "cooldown": {
+          "type": "integer"
+        },
+        "dimension": {
+          "type": "array",
+          "title": "dimensions",
+          "items": {
+            "$ref": "#/definitions/Dimension"
           }
+        },
+        "stepAdjustments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScalingUpStepAdjustment"
+          }
+        },
+        "action": {
+          "$ref": "#/definitions/MinTargetCapacityAction"
         }
       }
     },
@@ -119,8 +304,27 @@
                 "io1",
                 "gp2"
               ]
+            },
+            "dynamicVolumeSize": {
+              "type": "object",
+              "properties": {
+                "baseSize": {
+                  "type": "integer"
+                },
+                "resource": {
+                  "type": "string"
+                },
+                "sizePerResourceUnit": {
+                  "type": "integer"
+                }
+              }
+            },
+            "kmsKeyId": {
+              "type": "string"
+            },
+            "throughput": {
+              "type": "string"
             }
-          
           }
         }
       }
@@ -133,6 +337,91 @@
         },
         "value": {
           "type": "string"
+        }
+      }
+    },
+    "Headroom": {
+      "type": "object",
+      "properties": {
+        "cpuPerUnit": {
+          "type": "integer"
+        },
+        "memoryPerUnit": {
+          "type": "integer"
+        },
+        "numOfUnits": {
+          "type": "integer"
+        }
+      }
+    },
+    "AutoScaleDown": {
+      "type": "object",
+      "properties": {
+        "evaluationPeriods": {
+          "type": "integer"
+        },
+        "maxScaleDownPercentage": {
+          "type": "integer"
+        }
+      }
+    },
+    "volumeAttachmentsVolumes": {
+      "type": "object",
+      "properties": {
+        "volumeId": {
+          "type": "string"
+        },
+        "deviceName": {
+          "type": "string"
+        }
+      }
+    },
+    "volumeAttachments": {
+      "type": "object",
+      "properties": {
+        "volumes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/volumeAttachmentsVolumes"
+          }
+        }
+      }
+    },
+    "dockerSwarmAutoScale": {
+      "type": "object",
+      "properties": {
+        "cooldown": {
+          "type": "integer"
+        },
+        "down": {
+          "type": "object",
+          "$ref": "#/definitions/AutoScaleDown"
+        },
+        "headroom": {
+          "type": "object",
+          "$ref": "#/definitions/Headroom"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "tlsConfig": {
+          "type": "object",
+          "$ref": "#/definitions/tlsConfig"
+        }
+      }
+    },
+    "dockerSwarm": {
+      "type": "object",
+      "properties": {
+        "autoScale": {
+          "type": "object",
+          "$ref": "#/definitions/dockerSwarmAutoScale"
+        },
+        "masterHost": {
+          "type": "string"
+        },
+        "masterPort": {
+          "type": "integer"
         }
       }
     },
@@ -157,35 +446,32 @@
             "shouldScaleDownNonServiceTasks": {
               "type": "boolean"
             },
+            "enableAutomaticAndManualHeadroom": {
+              "type": "boolean"
+            },
             "headroom": {
               "type": "object",
-              "properties": {
-                "cpuPerUnit": {
-                  "type": "integer"
-                },
-                "memoryPerUnit": {
-                  "type": "integer"
-                },
-                "numOfUnits": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/Headroom"
             },
             "down": {
               "type": "object",
-              "properties": {
-                "evaluationPeriods": {
-                  "type": "integer"
-                },
-                "maxScaleDownPercentage": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/AutoScaleDown"
             },
             "attributes": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Attribute"
+              }
+            },
+            "resourceLimits": {
+              "type": "object",
+              "properties": {
+                "maxMemoryGib": {
+                  "type": "integer"
+                },
+                "maxVcpu": {
+                  "type": "integer"
+                }
               }
             }
           }
@@ -217,6 +503,203 @@
               }
             }
           }
+        }
+      }
+    },
+    "elasticBeanstalkStrategy": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "shouldDrainInstances": {
+          "type": "boolean"
+        }
+      }
+    },
+    "elasticBeanstalk": {
+      "type": "object",
+      "properties": {
+        "deploymentPreferences": {
+          "type": "object",
+          "properties": {
+            "automaticRoll": {
+              "type": "boolean"
+            },
+            "batchSizePercentage": {
+              "type": "integer"
+            },
+            "gracePeriod": {
+              "type": "integer"
+            },
+            "strategy": {
+              "type": "object",
+              "$ref": "#/definitions/elasticBeanstalkStrategy"
+            }
+          }
+        },
+        "environmentId": {
+          "type": "string"
+        },
+        "managedActions": {
+          "type": "object",
+          "properties": {
+            "platformUpdate": {
+              "type": "object",
+              "properties": {
+                "instanceRefreshEnabled": {
+                  "type": "boolean"
+                },
+                "performAt": {
+                  "type": "string"
+                },
+                "timeWindow": {
+                  "type": "string"
+                },
+                "updateLevel": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "kubernetesHeadroom": {
+      "type": "object",
+      "properties": {
+        "cpuPerUnit": {
+          "type": "integer"
+        },
+        "gpuPerUnit": {
+          "type": "integer"
+        },
+        "memoryPerUnit": {
+          "type": "integer"
+        },
+        "numOfUnits": {
+          "type": "integer"
+        }
+      }
+    },
+    "kubernetesAutoScale": {
+      "type": "object",
+      "properties": {
+        "cooldown": {
+          "type": "integer"
+        },
+        "down": {
+          "type": "object",
+          "properties": {
+            "evaluationPeriods": {
+              "type": "integer"
+            },
+            "headroom": {
+              "type": "object",
+              "$ref": "#/definitions/kubernetesHeadroom"
+            },
+            "maxScaleDownPercentage": {
+              "type": "integer"
+            }
+          }
+        },
+        "isAutoConfig": {
+          "type": "boolean"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "kubernetes": {
+      "type": "object",
+      "properties": {
+        "autoScale": {
+          "type": "object",
+          "$ref": "#/definitions/kubernetesAutoScale"
+        },
+        "clusterIdentifier": {
+          "type": "string"
+        },
+        "integrationMode": {
+          "type": "string"
+        }
+      }
+    },
+    "nomadScaleDown": {
+      "type": "object",
+      "properties": {
+        "evaluationPeriods": {
+          "type": "integer"
+        }
+      }
+    },
+    "nomadAutoScale": {
+      "type": "object",
+      "properties": {
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cooldown": {
+          "type": "integer"
+        },
+        "down": {
+          "type": "object",
+          "$ref": "#/definitions/nomadScaleDown"
+        },
+        "headroom": {
+          "type": "object",
+          "$ref": "#/definitions/Headroom"
+        },
+        "isEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "nomad": {
+      "type": "object",
+      "properties": {
+        "aclToken": {
+          "type": "string"
+        },
+        "autoScale": {
+          "type": "object",
+          "$ref": "#/definitions/nomadAutoScale"
+        },
+        "masterHost": {
+          "type": "string"
+        },
+        "masterPort": {
+          "type": "integer"
+        },
+        "tlsConfig": {
+          "type": "object",
+          "$ref": "#/definitions/tlsConfig"
         }
       }
     },
@@ -309,13 +792,67 @@
             "lifetimePeriod": {
               "type": "string"
             },
+            "persistence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "blockDevicesMode": {
+                    "type": "string"
+                  },
+                  "shouldPersistBlockDevices": {
+                    "type": "boolean"
+                  },
+                  "shouldPersistPrivateIp": {
+                    "type": "boolean"
+                  },
+                  "shouldPersistRootDevice": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
             "revertToSpot": {
               "type": "object",
               "properties": {
                 "performAt": {
                   "type": "string"
+                },
+                "timeWindows": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
+            },
+            "scalingStrategy": {
+              "type": "object",
+              "properties": {
+                "terminationPolicy": {
+                  "type": "string"
+                }
+              }
+            },
+            "signals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "timeout": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "utilizeCommitments": {
+              "type": "boolean"
+            },
+            "utilizeReservedInstances": {
+              "type": "integer"
             }
           }
         },
@@ -333,6 +870,26 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "preferredSpot": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "weights": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "instanceType": {
+                        "type": "string"
+                      },
+                      "weightedCapacity": {
+                        "type": "integer"
+                      }
+                    }
+                  }
                 }
               }
             },
@@ -349,6 +906,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "placementGroupName": {
+                    "type": "string"
                   }
                 }
               }
@@ -374,6 +934,12 @@
                 "imageId": {
                   "type": "string"
                 },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "keyPair": {
                   "type": "string"
                 },
@@ -395,6 +961,9 @@
                 "healthCheckGracePeriod": {
                   "type": "integer"
                 },
+                "healthCheckUnhealthyDurationBeforeReplacement": {
+                  "type": "integer"
+                },
                 "tenancy": {
                   "type": "string"
                 },
@@ -414,10 +983,257 @@
                       "type": "string"
                     }
                   }
+                },
+                "autoHealing": {
+                  "type": "boolean"
+                },
+                "cpuOptions": {
+                  "type": "object",
+                  "properties": {
+                    "threadsPerCore": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "creditSpecification": {
+                  "type": "object",
+                  "properties": {
+                    "cpuCredits": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "itf": {
+                  "type": "object",
+                  "properties": {
+                    "fixedTargetGroups": {
+                      "type": "boolean"
+                    },
+                    "loadBalancers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/ItfLoadBalancer"
+                      }
+                    },
+                    "migrationHealthinessThreshold": {
+                      "type": "integer"
+                    },
+                    "targetGroupConfig": {
+                      "type": "object",
+                      "properties": {
+                        "healthCheckIntervalSeconds": {
+                          "type": "integer"
+                        },
+                        "healthCheckPath": {
+                          "type": "string"
+                        },
+                        "healthCheckPort": {
+                          "type": "string"
+                        },
+                        "healthCheckProtocol": {
+                          "type": "string"
+                        },
+                        "healthCheckTimeoutSeconds": {
+                          "type": "integer"
+                        },
+                        "healthyThresholdCount": {
+                          "type": "integer"
+                        },
+                        "matcher": {
+                          "type": "object",
+                          "properties": {
+                            "grpcCode": {
+                              "type": "string"
+                            },
+                            "httpCode": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "port": {
+                          "type": "integer"
+                        },
+                        "protocol": {
+                          "type": "string"
+                        },
+                        "protocolVersion": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/definitions/Tag"
+                          }
+                        },
+                        "unhealthyThresholdCount": {
+                          "type": "integer"
+                        },
+                        "vpcId": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "weightStrategy": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "loadBalancersConfig": {
+                  "type": "object",
+                  "properties": {
+                    "loadBalancers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "arn": {
+                            "type": "string"
+                          },
+                          "autoWeight": {
+                            "type": "boolean"
+                          },
+                          "azAwareness": {
+                            "type": "boolean"
+                          },
+                          "balancerId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "targetSetId": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "metadataOptions": {
+                  "type": "object",
+                  "properties": {
+                    "httpPutResponseHopLimit": {
+                      "type": "integer"
+                    },
+                    "httpTokens": {
+                      "type": "string"
+                    },
+                    "instanceMetadataTags": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "networkInterfaces": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "associateIpv6Address": {
+                        "type": "boolean"
+                      },
+                      "associatePublicIpAddress": {
+                        "type": "boolean"
+                      },
+                      "deleteOnTermination": {
+                        "type": "boolean"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "deviceIndex": {
+                        "type": "integer"
+                      },
+                      "networkInterfaceId": {
+                        "type": "string"
+                      },
+                      "privateIpAddresses": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "primary": {
+                              "type": "boolean"
+                            },
+                            "privateIpAddress": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "secondaryPrivateIpAddressCount": {
+                        "type": "integer"
+                      },
+                      "subnetId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "resourceTagSpecification": {
+                  "type": "object",
+                  "properties": {
+                    "amis": {
+                      "type": "object",
+                      "properties": {
+                        "shouldTag": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "enis": {
+                      "type": "object",
+                      "properties": {
+                        "shouldTag": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "snapshots": {
+                      "type": "object",
+                      "properties": {
+                        "shouldTag": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "volumes": {
+                      "type": "object",
+                      "properties": {
+                        "shouldTag": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
                 }
+              }
+            },
+            "preferredAvailabilityZones": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "privateIps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "subnetIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
           }
+        },
+        "volumeAttachments": {
+          "type": "object",
+          "$ref": "#/definitions/volumeAttachments"
         },
         "capacity": {
           "type": "object",
@@ -442,13 +1258,105 @@
             "up": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/ScalingPolicy"
+                "$ref": "#/definitions/ScalingUpPolicy"
               }
             },
             "down": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/ScalingPolicy"
+                "$ref": "#/definitions/ScalingDownPolicy"
+              }
+            },
+            "multipleMetrics": {
+              "type": "object",
+              "properties": {
+                "expressions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "expression": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "metrics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "dimensions": {
+                        "type": "array",
+                        "title": "dimensions",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "extendedStatistic": {
+                        "type": "string"
+                      },
+                      "metricName": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "statistic": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "target": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "cooldown": {
+                    "type": "integer"
+                  },
+                  "metricName": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "policyName": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "statistic": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "integer"
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -456,9 +1364,208 @@
         "thirdPartiesIntegration": {
           "type": "object",
           "properties": {
+            "chef": {
+              "type": "object",
+              "properties": {
+                "chefServer": {
+                  "type": "string"
+                },
+                "chefVersion": {
+                  "type": "string"
+                },
+                "organization": {
+                  "type": "string"
+                },
+                "pemKey": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            },
+            "codeDeploy": {
+              "type": "object",
+              "properties": {
+                "cleanUpOnFailure": {
+                  "type": "boolean"
+                },
+                "deploymentGroups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "applicationName": {
+                        "type": "string"
+                      },
+                      "deploymentGroupName": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "terminateInstanceOnFailure": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "dockerSwarm": {
+              "type": "object",
+              "$ref": "#/definitions/dockerSwarm"
+            },
             "ecs": {
               "type": "object",
               "$ref": "#/definitions/ecs"
+            },
+            "elasticBeanstalk": {
+              "type": "object",
+              "$ref": "#/definitions/elasticBeanstalk"
+            },
+            "jenkins": {
+              "type": "object",
+              "properties": {
+                "connectionMethod": {
+                  "type": "object",
+                  "properties": {
+                    "jnlp": {
+                      "type": "object",
+                      "properties": {
+                        "masterIP": {
+                          "type": "string"
+                        },
+                        "masterPort": {
+                          "type": "string"
+                        },
+                        "userName": {
+                          "type": "string"
+                        },
+                        "password": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "ssh": {
+                      "type": "object",
+                      "properties": {
+                        "sshPublicKey": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "manuallyConnection": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            },
+            "kubernetes": {
+              "type": "object",
+              "$ref": "#/definitions/kubernetes"
+            },
+            "mesosphere": {
+              "type": "object",
+              "properties": {
+                "apiServer": {
+                  "type": "string"
+                }
+              }
+            },
+            "mlbRuntime": {
+              "type": "object",
+              "properties": {
+                "deploymentId": {
+                  "type": "string"
+                }
+              }
+            },
+            "nomad": {
+              "type": "object",
+              "$ref": "#/definitions/nomad"
+            },
+            "opsWorks": {
+              "type": "object",
+              "properties": {
+                "layerId": {
+                  "type": "string"
+                },
+                "stackType": {
+                  "type": "string"
+                }
+              }
+            },
+            "rancher": {
+              "type": "object",
+              "properties": {
+                "accessKey": {
+                  "type": "string"
+                },
+                "masterHost": {
+                  "type": "string"
+                },
+                "secretKey": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                }
+              }
+            },
+            "rightScale": {
+              "type": "object",
+              "properties": {
+                "accountId": {
+                  "type": "string"
+                },
+                "refreshToken": {
+                  "type": "string"
+                },
+                "region": {
+                  "type": "string"
+                }
+              }
+            },
+            "route53": {
+              "type": "object",
+              "properties": {
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hostedZoneId": {
+                        "type": "string"
+                      },
+                      "recordSets": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "usePublicDns": {
+                              "type": "boolean"
+                            },
+                            "usePublicIp": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "recordSetType": {
+                        "type": "string"
+                      },
+                      "spotinstAccountId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         },
