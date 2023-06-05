@@ -715,6 +715,15 @@
         "cronExpression": {
           "type": "string"
         },
+        "targetCapacity": {
+          "type": "integer"
+        },
+        "minCapacity": {
+          "type": "integer"
+        },
+        "maxCapacity": {
+          "type": "integer"
+        },
         "scaleTargetCapacity": {
           "type": "integer"
         },
@@ -852,7 +861,7 @@
               "type": "boolean"
             },
             "utilizeReservedInstances": {
-              "type": "integer"
+              "type": "boolean"
             }
           }
         },
@@ -1211,6 +1220,10 @@
                 }
               }
             },
+            "volumeAttachments": {
+              "type": "object",
+              "$ref": "#/definitions/volumeAttachments"
+            },
             "preferredAvailabilityZones": {
               "type": "array",
               "items": {
@@ -1230,10 +1243,6 @@
               }
             }
           }
-        },
-        "volumeAttachments": {
-          "type": "object",
-          "$ref": "#/definitions/volumeAttachments"
         },
         "capacity": {
           "type": "object",
