@@ -54,8 +54,8 @@ public class CreateHandlerTest {
         Scaling scaling = new Scaling();
 
         // Up scaling
-        List<ScalingPolicy> upScalingPolicies = new LinkedList<>();
-        ScalingPolicy upScalingPolicy = new ScalingPolicy();
+        List<ScalingUpPolicy> upScalingPolicies = new LinkedList<>();
+        ScalingUpPolicy upScalingPolicy = new ScalingUpPolicy();
         upScalingPolicy.setPolicyName("up Scaling Policy 1");
         upScalingPolicy.setMetricName("CPUUtilization");
         upScalingPolicy.setStatistic("average");
@@ -66,7 +66,7 @@ public class CreateHandlerTest {
         upScalingPolicy.setEvaluationPeriods(3);
         upScalingPolicy.setCooldown(300);
 
-        Action action = new Action();
+        MinTargetCapacityAction action = new MinTargetCapacityAction();
         action.setType("adjustment");
         action.setAdjustment("1");
         upScalingPolicy.setAction(action);
